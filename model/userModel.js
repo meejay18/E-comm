@@ -1,6 +1,6 @@
 import mongoose, { Types } from 'mongoose'
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -23,6 +23,13 @@ const userSchema = mongoose.Schema(
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
+    },
+    address: {
+      city: String,
+      street: String,
+      state: String,
+      country: String,
+      postalCode: String,
     },
     cart: [
       {

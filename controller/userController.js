@@ -48,13 +48,13 @@ export const loginUser = async (req, res, next) => {
     })
   }
   try {
-    const user = await userModel.findOne(email)
+    const user = await userModel.findOne({ email })
     if (!user) {
       return res.status(200).json({
         message: 'User not found. Create a new account',
       })
     }
-    const check = bcrypt.compare(user.password === password)
+    const check = bcrypt.compare(password, user.password)
     if (!check) {
       return res.status(200).json({
         message: 'Password incorrect ',
@@ -62,8 +62,11 @@ export const loginUser = async (req, res, next) => {
     }
 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '2d' })
-
-    res.cookies('token', token, {})
+    res.cookie('token', token, {
+      maxAge: 1000 * 60 * 60,
+      httpOnly: true,
+      secure: true,
+    })
 
     return res.status(200).json({
       message: 'Login successful',

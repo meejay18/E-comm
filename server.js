@@ -6,11 +6,13 @@ const PORT = 7070
 import dotenv from 'dotenv'
 dotenv.config()
 import userRoute from './routes/userRoute.js'
+import productRoute from './routes/productRoute.js'
 
 app.use(express.json())
 app.use(cookieparser())
 
 app.use(userRoute)
+app.use(productRoute)
 
 mongoose
   .connect(process.env.MONGO_URL)
