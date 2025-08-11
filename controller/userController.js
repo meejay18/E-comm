@@ -6,6 +6,45 @@ export const createUser = async (req, res, next) => {
   try {
     const { name, email, password, ...others } = req.body
 
+    if (!name) {
+      return res.status(400).json({
+        message: 'name required',
+      })
+    }
+    if (!email) {
+      return res.status(400).json({
+        message: 'email required',
+      })
+    }
+    if (!password) {
+      return res.status(400).json({
+        message: 'Input password',
+      })
+    }
+    const salt = await bcrypt.genSalt(10)
+    const hash = await bcrypt.hash(password, salt)
+
+    const newUser = userModel({ name, email, password: hash, ...others })
+    const savedUser = await newUser.save()
+
+    return res.status(201).json({
+      message: 'User created successfully',
+      data: savedUser,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+export const adminUser = async (req, res, next) => {
+  try {
+    const { name, role, email, password, ...others } = req.body
+
+    if (role !== 'admin') {
+      return res.status(401).json({
+        message: 'Role must be an admin',
+      })
+    }
+
     if (!name || !email || !password) {
       return res.status(400).json({
         message: 'credentials required',
@@ -14,7 +53,7 @@ export const createUser = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
 
-    const newUser = userModel({ name, email, password: hash, ...others })
+    const newUser = userModel({ name, role, email, password: hash, ...others })
     const savedUser = await newUser.save()
 
     return res.status(201).json({

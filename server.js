@@ -7,12 +7,14 @@ import dotenv from 'dotenv'
 dotenv.config()
 import userRoute from './routes/userRoute.js'
 import productRoute from './routes/productRoute.js'
+import cartRoute from './routes/cartRoute.js'
 
 app.use(express.json())
 app.use(cookieparser())
 
 app.use(userRoute)
 app.use(productRoute)
+app.use(cartRoute)
 
 mongoose
   .connect(process.env.MONGO_URL)
