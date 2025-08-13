@@ -81,9 +81,14 @@ export const getAllUsers = async (req, res, next) => {
 export const loginUser = async (req, res, next) => {
   const { email, password } = req.body
 
-  if (!email || !password) {
+  if (!email) {
     return res.status(400).json({
-      message: 'Credentials needed',
+      message: 'Email required',
+    })
+  }
+  if (!password) {
+    return res.status(400).json({
+      message: 'Password required',
     })
   }
   try {

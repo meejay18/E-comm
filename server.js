@@ -8,6 +8,7 @@ dotenv.config()
 import userRoute from './routes/userRoute.js'
 import productRoute from './routes/productRoute.js'
 import cartRoute from './routes/cartRoute.js'
+import orderRoute from './routes/orderRoute.js'
 
 app.use(express.json())
 app.use(cookieparser())
@@ -15,6 +16,7 @@ app.use(cookieparser())
 app.use(userRoute)
 app.use(productRoute)
 app.use(cartRoute)
+app.use(orderRoute)
 
 mongoose
   .connect(process.env.MONGO_URL)
