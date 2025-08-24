@@ -1,5 +1,4 @@
 import orderModel from '../model/orderModel.js'
-import userModel from '../model/userModel.js'
 import cartModel from '../model/cartModel.js'
 
 export const createOrderFromCart = async (req, res, next) => {
@@ -48,11 +47,44 @@ export const createOrderFromCart = async (req, res, next) => {
 
 export const viewAllOrders = async (req, res, next) => {
   try {
-    const orders = await orderModel.find()
+    const orders = await orderModel
+      .find()
+      .populate('user_id', 'name email')
+      .populate('items.productId', 'name, price')
 
     return res.status(200).json({
       message: 'Orders retrieved successfully',
       data: orders,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateOrderstatus = async (req, res, next) => {
+  const { orderId } = req.params
+  const { status } = req.body
+  try {
+    const validateStatus = ['pending', 'paid', 'shipped', 'deleivered', 'cancelled']
+    if (!validateStatus.includes(status)) {
+      return res.status(400).json({
+        message: 'Invalid status',
+      })
+    }
+
+    const order = await orderModel.findById(orderId)
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found',
+      })
+    }
+
+    order.status = status
+    await order.save()
+
+    return res.status(200).json({
+      message: 'Order updated successfully',
+      data: order,
     })
   } catch (error) {
     next(error)
