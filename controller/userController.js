@@ -35,35 +35,6 @@ export const createUser = async (req, res, next) => {
     next(error)
   }
 }
-export const adminUser = async (req, res, next) => {
-  try {
-    const { name, role, email, password, ...others } = req.body
-
-    if (role !== 'admin') {
-      return res.status(401).json({
-        message: 'Role must be an admin',
-      })
-    }
-
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        message: 'credentials required',
-      })
-    }
-    const salt = await bcrypt.genSalt(10)
-    const hash = await bcrypt.hash(password, salt)
-
-    const newUser = userModel({ name, role, email, password: hash, ...others })
-    const savedUser = await newUser.save()
-
-    return res.status(201).json({
-      message: 'User created successfully',
-      data: savedUser,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -72,6 +43,51 @@ export const getAllUsers = async (req, res, next) => {
     return res.status(200).json({
       message: 'Users retrived  successfully',
       data: users,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+export const getOneUser = async (req, res, next) => {
+  const { userId } = req.params
+  try {
+    const user = await userModel.findById(userId)
+
+    return res.status(200).json({
+      message: 'User retrived  successfully',
+      data: user,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateUser = async (req, res, next) => {
+  const { id, role } = req.user
+  const { userId } = req.params
+  const data = req.body
+  try {
+    const user = await userModel.findById(userId)
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+        data: updateUser,
+      })
+    }
+
+    const isOwner = user.id === id
+    const isAdmin = role === 'admin'
+
+    if (!isOwner || !isAdmin) {
+      return res.status(400).json({
+        message: 'You cannot carry out this operation',
+      })
+    }
+    const updateUser = await userModel.findByIdAndUpdate(userId, { ...data }, { new: true })
+
+    return res.status(200).json({
+      message: 'User retrived  successfully',
+      data: updateUser,
     })
   } catch (error) {
     next(error)
