@@ -78,8 +78,8 @@ export const updateUser = async (req, res, next) => {
     const isOwner = user.id === id
     const isAdmin = role === 'admin'
 
-    if (!isOwner || !isAdmin) {
-      return res.status(400).json({
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
         message: 'You cannot carry out this operation',
       })
     }
