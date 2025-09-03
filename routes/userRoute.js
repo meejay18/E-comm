@@ -16,6 +16,6 @@ route.get('/getAllUsers', authentication, isAdmin, getAllUsers)
 route.get('/getOneUser/:userId', authentication, isAdmin, getOneUser)
 route.post('/loginuser', loginUser)
 route.put('/user/:userId', authentication, updateUser)
-route.delete('/user/:userId', authentication, deleteUser)
+route.delete('/user/:userId', authentication, isAdmin, deleteUser)
 
 export default route
